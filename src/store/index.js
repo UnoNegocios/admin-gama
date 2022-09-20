@@ -8,6 +8,7 @@ import podcast_serie from "./modules/podcast_serie"
 import live from "./modules/live"
 import campaign from "./modules/campaign"
 import ads from "./modules/ads"
+import post from "./modules/post"
 
 
 Vue.use(Vuex)
@@ -20,6 +21,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    post,
     currentUser,
     podcast,
     user,

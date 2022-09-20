@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Lives from '../components/lives/table.vue'
+import News from '../components/news/table.vue'
 import Podcast from '../components/podcasts/series/table.vue'
 import Ads from '../components/ads/campaigns/table.vue'
 import Reports from '../components/reports.vue'
@@ -19,6 +20,11 @@ Vue.use(VueRouter)
     path: '/podcast',
     name: 'Podcast',
     component: Podcast
+  },
+  {
+    path: '/news',
+    name: 'News',
+    component: News
   },
   {
     path: '/podcast/:serie_id',

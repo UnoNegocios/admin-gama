@@ -40,6 +40,7 @@ export default {
       //{icon: 'mdi-chart-bar', label:'Reportes', link:'/reports', disabled:true},
       {icon: 'mdi-account-multiple', label:'Usarios', link:'/users', disabled:false},
       {icon: 'mdi-account', label:'Mi Cuenta', link:'/account', disabled:false},
+      {icon: 'mdi-newspaper-variant-outline', label:'Noticias', link:'/news', disabled:false},
     ]
   }),
   computed:{
@@ -72,7 +73,7 @@ export default {
   }
 };
 </script>
-<style>
+<!--style>
 .v-dialog--fullscreen{
   margin-top: 65px!important; 
   height:calc(100% - 65px)!important;
@@ -86,6 +87,6 @@ export default {
 .theme--light.v-btn:hover::before {
     opacity: 0.0!important;
 }
-</style>
+</style-->
 
 
