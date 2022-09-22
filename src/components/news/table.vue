@@ -55,13 +55,13 @@
                     </v-btn>
                     </template>
                     <v-list style="font-size:13px;">
-                        <v-list-item @click="editItem(item)">
+                        <v-list-item @click="editItem(item)" disabled>
                             <v-icon small class="mr-2">
                                 mdi-pencil
                             </v-icon>
                             Editar
                         </v-list-item>
-                        <v-list-item @click="deleteItem(item.id)">
+                        <v-list-item @click="deleteItem(item.id)" disabled>
                             <v-icon small class="mr-2">
                                 mdi-delete
                             </v-icon>

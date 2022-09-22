@@ -7,7 +7,7 @@
             <v-toolbar-title>Nueva Noticia</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                <v-btn dark text @click="save()">
+                <v-btn disabled dark text @click="save()">
                     Publicar
                 </v-btn>
             </v-toolbar-items>
@@ -142,8 +142,10 @@ export default {
             console.log('repsonse')
             axios.post('https://wp-backend.gamavision.com/wp-json/wp/v2/posts',{
                 //...data
-            },{
-                'authorization': {"username": "front-end", "password": "XAg(((A^08AdhD#Y#t&Sng2Q"}
+            }, {
+                headers:{
+                    'Authorization': {"username": "front-end", "password": "XAg(((A^08AdhD#Y#t&Sng2Q"}
+                }
             }).then(response=>{
                 console.log(repsonse)
             })

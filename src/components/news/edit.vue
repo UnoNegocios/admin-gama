@@ -1,297 +1,174 @@
 <template>
-  <v-container class="pa-0">
-        <v-card class="elevation-0 pa-6">
-            <v-card-title>Editar Usuario</v-card-title>
-            <v-form>
-                <v-row class="ma-0">
-                    <v-col cols="6" class="py-0">
-                        <v-text-field 
-                            :rules="[rules.required]"
-                            name="name"
-                            label="Nombre"
-                            outlined
-                            v-model="user.name" 
-                            dense
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="6" class="py-0">
-                        <v-text-field 
-                            :rules="[rules.required]"
-                            name="last"
-                            label="Apellido"
-                            outlined
-                            v-model="user.last" 
-                            dense
-                        ></v-text-field>
-                    </v-col>
-
-                    <v-col cols="6" class="py-0">
-                        <v-autocomplete :loading="isLoadingStates" :search-input.sync="searchStates" hide-no-data placeholder="Escribe para buscar" attach
-                            :rules="[rules.required]"
-                            name="state"
-                            label="Estado"
-                            outlined
-                            v-model="state" 
-                            dense
-                            :items="statesList"
-                            item-value="name"
-                            item-text="name"
-                        ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="6" class="py-0"><!--:search-input.sync="searchCities"-->
-                        <v-autocomplete :loading="isLoadingCities" hide-no-data placeholder="Escribe para buscar" attach
-                            :rules="[rules.required]"
-                            name="city"
-                            label="Ciudad"
-                            outlined
-                            v-model="user.city" 
-                            dense
-                            :items="citiesList"
-                            :disabled="state==''"
-                            item-value="name"
-                            item-text="name"
-                        ></v-autocomplete>
-                    </v-col>
-
-
-                    <v-col cols="6" class="py-0">
-                        <v-menu
-                            ref="menu"
-                            v-model="menu"
-                            :close-on-content-click="false"
-                            transition="scale-transition"
-                            offset-y
-                            min-width="auto">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                v-model="user.birthdate"
-                                label="Fecha de Nacimiento"
-                                prepend-inner-icon="mdi-calendar"
-                                readonly
-                                v-bind="attrs"
-                                v-on="on"
-                                :rules="[rules.required]"
-                                name="birthdate"
-                                outlined
-                                dense
-                                ></v-text-field>
-                            </template>
-                            <v-date-picker
-                                v-model="user.birthdate"
-                                :active-picker.sync="activePicker"
-                                :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
-                                min="1950-01-01"
-                                @change="saveDate"
-                            ></v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="6" class="py-0">
-                        <v-select
-                            :rules="[rules.required]"
-                            name="gender"
-                            label="Genero"
-                            outlined
-                            v-model="user.gender" 
-                            dense
-                            :items="genders"
-                        ></v-select>
-                    </v-col>
-                    <v-col cols="6" class="py-0">
-                        <v-select
-                            :rules="[rules.required]"
-                            name="type"
-                            label="Tipo de Usuario"
-                            outlined
-                            v-model="user.type" 
-                            dense
-                            :items="types"
-                        ></v-select>
-                    </v-col>
-                    <v-col cols="6" class="py-0">
-                        <v-text-field 
-                            :rules="[rules.required]"
-                            @keydown.enter="login" 
-                            label="Correo Electrónico" 
-                            name="login" 
-                            v-model="user.email" 
-                            outlined
-                            dense
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" class="pt-0 mb-5" >
-                        <v-btn v-if="!newPassword" class="elevation-0" @click="newPassword=true" small>Establecer una nueva contraseña</v-btn>
-                        <v-btn v-if="newPassword" class="elevation-0" @click="newPassword=false, user.password='', confirmPassword=''" small>Cancelar</v-btn>
-                    </v-col>
-                    <v-col cols="6" class="py-0" v-if="newPassword">
-                        <v-text-field 
-                            :rules="[rules.required]"
-                            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                            :type="show ? 'text' : 'password'"
-                            name="password"
-                            label="Contraseña"
-                            outlined
-                            @click:append="show = !show"
-                            @keydown.enter="login" v-model="user.password" 
-                            dense
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="6" class="py-0" v-if="newPassword">
-                        <v-text-field 
-                            :rules="[rules.required, rules.same_password]"
-                            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                            :type="show ? 'text' : 'password'"
-                            name="password"
-                            label="Confirmar Contraseña"
-                            outlined
-                            @click:append="show = !show"
-                            @keydown.enter="login" v-model="confirmPassword" 
-                            dense
-                            :disabled="user.password==''"
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-            </v-form>
-            <v-card-actions class="px-0">
-                <v-btn @click="close()" class="elevation-0 px-4" text><strong>Cancelar</strong></v-btn>
-                <v-btn :disabled="ready||gris" @click="save()" class="elevation-0 px-4" color="primary"><strong>Guardar</strong></v-btn>
-            </v-card-actions>
-        </v-card>
+    <v-card class="elevation-0">
+        <v-toolbar dark color="primary" class="elevation-0">
+            <v-btn icon dark @click="close()">
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-toolbar-title>Modificar Noticia</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+                <v-btn dark text @click="save()">
+                    Actualizar
+                </v-btn>
+            </v-toolbar-items>
+        </v-toolbar>
+        <v-form class="px-12 py-6">
+            <v-row class="ma-0">
+                <v-col cols="8">
+                    <v-text-field label="Título"></v-text-field>
+                </v-col>
+                <v-col cols="4">
+                    <v-autocomplete :loading="isLoadingCategories" :search-input.sync="searchCategories" hide-no-data placeholder="Escribe para buscar" attach
+                        name="category"
+                        label="Categorías"
+                        outlined
+                        v-model="post.categories" 
+                        dense
+                        :items="categories"
+                        item-value="id"
+                        class="mt-3"
+                        item-text="name"
+                        multiple
+                        small-chips
+                    ></v-autocomplete>
+                </v-col>
+            </v-row>
+            <vue-editor
+                id="editor"
+                useCustomImageHandler
+                @imageAdded="handleImageAdded"
+                v-model="post.htmlForEditor"
+                >
+            </vue-editor>
+            <v-row class="ma-4">
+                <v-spacer/>
+                <vue-dropzone 
+                ref="myVueDropzone" 
+                id="dropzone" 
+                :options="dropzoneOptions" 
+                v-on:vdropzone-success="uploadSuccess" 
+                v-on:vdropzone-error="uploadError" 
+                v-on:vdropzone-removed-file="fileRemoved"/>
+                <v-spacer/>
+            </v-row>
+        </v-form>
         <v-snackbar :color="snackbar.color" v-model="snackbar.show">
             <strong>{{ snackbar.message }}</strong>
         </v-snackbar>
-    </v-container>
+    </v-card>
 </template>
 
 <script>
+import vue2Dropzone from "vue2-dropzone";
+import "vue2-dropzone/dist/vue2Dropzone.min.css";
+import { VueEditor } from "vue2-editor";
 import axios from 'axios'
 export default {
-    props:{
-        user:Object
+    components: { 
+        VueEditor,
+        vueDropzone: vue2Dropzone
     },
     data: () => ({
-        newPassword:false,
-        activePicker: null,
-        menu: false,
-        gris:false,
-        show: false,
-        confirmPassword:'',
+        searchCategories:'',
+        isLoadingCategories:false,
+        post:{
+            categories:[],
+            htmlForEditor:''
+        },
+        categories:[],
+        image:'',
         snackbar: {
             show: false,
             message: null,
             color: null
         },
-        genders:['Masculino', 'Femenino', 'Prefiero no decirlo'],
-        types:['Administrador', 'Usuario App'],
-        entries:{
-            states: [],
-            cities:[]
+        dropzoneOptions: {
+            url: process.env.VUE_APP_BACKEND_ROUTE + "api/v1/podcast_serie/files",
+            addRemoveLinks: true,
+            maxFiles: 1,
+            //thumbnailWidth: 150,
+            dictDefaultMessage: 'Haz clic aquí para agregar o arrastra la imagen destacada',
+            dictFallbackMessage: "Tu navegador no puede subir archivos arrastarndolos a la pantalla.",
+            dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+            dictInvalidFileType: "No puede cargar archivos de este tipo.",
+            dictCancelUpload: "Cancelar carga",
+            dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
+            dictRemoveFile: "Eliminar",
+            dictMaxFilesExceeded: "No puedes subir más archivos.",
         },
-        password:'',
-        state:'',
-        isLoadingCities: false,
-        isLoadingStates: false,
-        searchCities: null,
-        searchStates: null,
     }),
     computed:{
-        statesList(){
-            return this.entries.states
-        },
-        citiesList(){
-            return this.entries.cities
-        },
-        rules(){
-            return{
-                required: value => !!value || 'Campo requerido.',
-                email: value => {
-                    const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                    return pattern.test(value) || 'E-mail inavlido.'
-                },
-                same_password: value => value === this.user.password || 'Las contraseñas no coinciden',
-            }
-        },
-        ready(){
-            console.log(this.user.birthdate)
-            if(this.user.name!=''&&
-            //this.user.state!=''&&
-            this.user.type!=''&&
-            this.user.gender!=''&&
-            this.user.city!=''&&
-            this.user.birthdate!=''&&
-            this.user.email!=''&&
-            this.user.name!=''){
-                if(this.newPassword){
-                    if(this.user.password!=''&&this.user.password==this.confirmPassword){
-                        return false
-                    }else{
-                        return true
-                    }
-                }else{
-                    return false
-                }
-            }else{
-                return true
-            }
-        },
+
     },
     methods:{
-        saveDate (date) {
-            this.$refs.menu.save(date)
-        },
-        save(){
-            var user_id = this.user.id
-            this.entries.state = this.state
-            axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/users" + user_id, this.user).then(response=>{
-                if(this.newPassword){
-                    axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/user/password" + user_id, {password: this.password}).then(response=>{
-                        this.close()
-                    })
-                }else{
-                    this.close()
-                }
-            }).catch(error=>{
+        handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
+            var formData = new FormData();
+            formData.append("image", file);
+            axios({
+                url: "https://fakeapi.yoursite.com/images",
+                method: "POST",
+                data: formData
+            })
+            .then(result => {
+                const url = result.data.url;
+                Editor.insertEmbed(cursorLocation, "image", url);
+                resetUploader();
+            })
+            .catch(err => {
                 this.snackbar = {
-                    message: error.response.data.message,
+                    message: err,
                     color: 'error',
                     show: true
                 }
-                this.gris = false
+            });
+        },
+        uploadSuccess(file, response) {
+            this.image = file
+            this.serie.image_url = response.file
+            this.colorFile = 'success'
+        },
+        uploadError(file, message) {
+            this.snackbar = {
+                message: 'No se puedo cargar la imagen',
+                color: 'error',
+                show: true
+            }
+            this.colorFile = 'error'
+        },
+        fileRemoved() {
+            this.image = ''
+        },
+        save(){
+            console.log('repsonse')
+            axios.post('https://wp-backend.gamavision.com/wp-json/wp/v2/posts',{
+                //...data
+            }, {
+                headers:{
+                    'Authorization': {"username": "front-end", "password": "XAg(((A^08AdhD#Y#t&Sng2Q"}
+                }
+            }).then(response=>{
+                console.log(repsonse)
             })
         },
         close(){
+            if(this.image!=''&&this.image!=null&&this.image!=undefined){
+                this.$refs.myVueDropzone.removeFile(this.image)
+            }
             this.$nextTick(() => {
-                this.$emit("closeEditDialog", false);
+                this.$emit("closeCreateDialog", false);
             })
         }
     },
-    created(){
-        this.state = this.user.state
-    },
     watch: {
-        menu (val) {
-            val && setTimeout(() => (this.activePicker = 'YEAR'))
-        },
-        searchStates(val){
+        searchCategories(val){
             //if (this.statesList.length > 0) return
-            if (this.isLoadingStates) return
-            this.isLoadingStates = true
+            if (this.isLoadingCategories) return
+            this.isLoadingCategories = true
 
-            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/states?filter[name]='+val)
+            axios.get('https://wp-backend.gamavision.com/wp-json/wp/v2/categories?search='+val)
             .then(res => {
-                this.entries.states = res.data
-            }).finally(() => (this.isLoadingStates = false))
-        },
-        state: {
-            handler () {
-                //if (this.citiesList.length > 0) return
-                if (this.isLoadingCities) return
-                this.isLoadingCities = true
-                axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/cities?filter[state.name]=' + this.state)
-                .then(res => {
-                    this.entries.cities = res.data
-                }).finally(() => (this.isLoadingCities = false))
-            },
-            deep: true,
+                this.categories = this.categories.concat(res.data)
+            }).finally(() => (this.isLoadingCategories = false))
         },
     },
 }
