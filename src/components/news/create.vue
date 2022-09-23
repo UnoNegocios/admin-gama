@@ -7,7 +7,7 @@
             <v-toolbar-title>Nueva Noticia</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                <v-btn disabled dark text @click="save()">
+                <v-btn dark text @click="save()">
                     Publicar
                 </v-btn>
             </v-toolbar-items>
@@ -15,7 +15,7 @@
         <v-form class="px-12 py-6">
             <v-row class="ma-0">
                 <v-col cols="8">
-                    <v-text-field label="Título"></v-text-field>
+                    <v-text-field v-model="post.title" label="Título"></v-text-field>
                 </v-col>
                 <v-col cols="4">
                     <v-autocomplete :loading="isLoadingCategories" :search-input.sync="searchCategories" hide-no-data placeholder="Escribe para buscar" attach
@@ -43,6 +43,7 @@
             <v-row class="ma-4">
                 <v-spacer/>
                 <vue-dropzone 
+                v-bind:auth="dropzoneOptions.headers"
                 ref="myVueDropzone" 
                 id="dropzone" 
                 :options="dropzoneOptions" 
@@ -73,7 +74,8 @@ export default {
         isLoadingCategories:false,
         post:{
             categories:[],
-            htmlForEditor:''
+            htmlForEditor:'',
+            title:''
         },
         categories:[],
         image:'',
@@ -83,7 +85,7 @@ export default {
             color: null
         },
         dropzoneOptions: {
-            url: process.env.VUE_APP_BACKEND_ROUTE + "api/v1/podcast_serie/files",
+            url: "https://example.com/wp-json/wp/v2/media",
             addRemoveLinks: true,
             maxFiles: 1,
             //thumbnailWidth: 150,
@@ -95,6 +97,9 @@ export default {
             dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
             dictRemoveFile: "Eliminar",
             dictMaxFilesExceeded: "No puedes subir más archivos.",
+            headers: {
+                Authorization: 'Basic ' + window.btoa( 'admin:01672802' ) 
+            }
         },
     }),
     computed:{
@@ -140,11 +145,10 @@ export default {
         },
         save(){
             console.log('repsonse')
-            axios.post('https://wp-backend.gamavision.com/wp-json/wp/v2/posts',{
-                //...data
-            }, {
-                headers:{
-                    'Authorization': {"username": "front-end", "password": "XAg(((A^08AdhD#Y#t&Sng2Q"}
+            axios.post('https://wp-backend.gamavision.com/wp-json/wp/v2/posts', this.post, {
+                auth: {
+                    username: 'front-end',
+                    password: 'XAg(((A^08AdhD#Y#t&Sng2Q'
                 }
             }).then(response=>{
                 console.log(repsonse)
