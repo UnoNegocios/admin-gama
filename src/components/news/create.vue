@@ -85,7 +85,7 @@ export default {
             color: null
         },
         dropzoneOptions: {
-            url: "https://example.com/wp-json/wp/v2/media",
+            url: "https://wp-backend.gamavision.com/wp-json/wp/v2/media",
             addRemoveLinks: true,
             maxFiles: 1,
             //thumbnailWidth: 150,

@@ -14,7 +14,7 @@ const actions = {
         var items_per_page = '&per_page=' + props.itemsPerPage
         var category = props.category
         return new Promise((resolve, reject) => {
-            axios.get('https://wp-backend.gamavision.com/wp-json/wp/v2/posts?_fields=id,date,title,categories'+category + items_per_page).then(response => {
+            axios.get('https://wp-backend.gamavision.com/wp-json/wp/v2/posts').then(response => {
                 commit('setPosts', response.data);
                 state.loader = false;
             }).finally(() => (resolve(false)))
