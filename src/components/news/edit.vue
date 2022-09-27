@@ -36,6 +36,7 @@
                     ></v-autocomplete>
                 </v-col>
             </v-row>
+            <strong>Contenido:</strong>
             <vue-editor
                 use-custom-image-handler
                 @image-added="handleImageAdded"
@@ -43,7 +44,12 @@
                 :editorOptions="editorSettings"
                 >
             </vue-editor>
-            <v-row class="ma-4">
+            <v-row class="ma-4 mt-8">
+                <v-textarea v-model="post.short_description"
+                counter
+                maxlength="100"
+                outlined  
+                label="Descripción Corta"></v-textarea>
                 <v-spacer/>
                 <vue-dropzone 
                 v-bind:auth="dropzoneOptions.headers"
@@ -53,7 +59,6 @@
                 v-on:vdropzone-success="uploadSuccess" 
                 v-on:vdropzone-error="uploadError" 
                 v-on:vdropzone-removed-file="fileRemoved"/>
-                <v-spacer/>
             </v-row>
         </v-form>
         <v-snackbar :color="snackbar.color" v-model="snackbar.show">
@@ -102,7 +107,7 @@ export default {
             addRemoveLinks: true,
             maxFiles: 1,
             //thumbnailWidth: 150,
-            dictDefaultMessage: 'Haz clic aquí para editar o arrastra la nueva imagen destacada',
+            dictDefaultMessage: 'Haz clic aquí para editar o arrastra la nueva imagen destacada. <br/><strong>Se recomienda relación aspecto 16:9</strong><br/><span style="font-size:14px; color:#b3b3b3;">Medida sugerida: 960 x 540 pixeles<span/>',
             dictFallbackMessage: "Tu navegador no puede subir archivos arrastarndolos a la pantalla.",
             dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
             dictInvalidFileType: "No puede cargar archivos de este tipo.",
@@ -110,9 +115,6 @@ export default {
             dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
             dictRemoveFile: "Eliminar",
             dictMaxFilesExceeded: "No puedes subir más archivos.",
-            headers: {
-                Authorization: 'Basic ' + window.btoa( 'admin:01672802' )
-            }
         },
     }),
     watch:{

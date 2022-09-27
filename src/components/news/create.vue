@@ -45,7 +45,11 @@
                 >
             </vue-editor>
             <v-row class="ma-4 mt-8">
-                <v-textarea v-model="post.short_description"  outlined  label="Descripción Corta"></v-textarea>
+                <v-textarea v-model="post.short_description"
+                counter
+                maxlength="100"
+                outlined  
+                label="Descripción Corta"></v-textarea>
                 <v-spacer/>
                 <vue-dropzone 
                 v-bind:auth="dropzoneOptions.headers"
@@ -112,7 +116,7 @@ export default {
             addRemoveLinks: true,
             maxFiles: 1,
             //thumbnailWidth: 150,
-            dictDefaultMessage: 'Haz clic aquí para agregar o arrastra la imagen destacada',
+            dictDefaultMessage: 'Haz clic aquí para editar o arrastra la imagen destacada. <br/><strong>Se recomienda relación aspecto 16:9</strong><br/><span style="font-size:14px; color:#b3b3b3;">Medida sugerida: 960 x 540 pixeles<span/>',
             dictFallbackMessage: "Tu navegador no puede subir archivos arrastarndolos a la pantalla.",
             dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
             dictInvalidFileType: "No puede cargar archivos de este tipo.",
@@ -120,9 +124,6 @@ export default {
             dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
             dictRemoveFile: "Eliminar",
             dictMaxFilesExceeded: "No puedes subir más archivos.",
-            headers: {
-                Authorization: 'Basic ' + window.btoa( 'admin:01672802' )
-            }
         },
     }),
     computed:{

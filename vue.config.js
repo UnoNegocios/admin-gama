@@ -4,8 +4,8 @@ module.exports = {
   ],
 
   pwa: {
-    name: 'Dominio Medios',
-    short_name: 'Dominio Medios',
+    name: 'GAMAVISION',
+    short_name: 'GAMAVISION',
     themeColor: '#a1133c',
     msTileColor: '#a1133c',
     backgroundColor: '#a1133c',
