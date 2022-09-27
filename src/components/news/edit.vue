@@ -10,7 +10,7 @@
             <v-toolbar-items>
                 <v-checkbox class="my-5 mr-5" v-model="post.visibility.web" label="Página Web"></v-checkbox>
                 <v-checkbox class="my-5 mr-5" v-model="post.visibility.app" label="Aplicación"></v-checkbox>
-                <v-btn dark text @click="save()">
+                <v-btn dark text @click="save()" :disabled="grey">
                     Actualizar
                 </v-btn>
             </v-toolbar-items>
@@ -130,6 +130,18 @@ export default {
     computed:{
         categories(){
             return this.$store.state.category.categories
+        },
+        grey(){
+            if((this.post.categories.length==0||
+            this.post.content==''||this.post.content==null||this.post.content==undefined||
+            this.post.title==''||this.post.title==null||this.post.title==undefined||
+            this.post.featured_media_path==''||this.post.featured_media_path==null||this.post.featured_media_path==undefined||
+            this.post.short_description==''||this.post.short_description==null||this.post.short_description==undefined) 
+            || (!this.post.visibility.app && !this.post.visibility.web) ){
+                return true
+            }else{
+                return false
+            }
         }
     },
     methods:{
