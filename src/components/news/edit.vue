@@ -116,16 +116,21 @@ export default {
             dictRemoveFile: "Eliminar",
             dictMaxFilesExceeded: "No puedes subir más archivos.",
         },
+        puse:false,
     }),
     watch:{
         post:{
             handler(){
-                this.post.categories = this.post.categories.map(category=>category.id)
+                if(!this.pause){
+                    this.post.categories = this.post.categories.map(category=>category.id)
+                    this.pause = true
+                }
             }, deep:true
         }
     },
     created(){
         this.post.categories = this.post.categories.map(category=>category.id)
+        this.pause = true
     },
     computed:{
         categories(){
