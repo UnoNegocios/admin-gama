@@ -46,6 +46,12 @@
             <template v-slot:no-data>
                 No existen registros de usuarios aún
             </template>
+            <template v-slot:[`item.date`]="{ item }">
+                {{dateFormat(item.created_at)}}
+            </template>
+            <template v-slot:[`item.categories`]="{ item }">
+                <span v-for="(category, index) in item.categories" v-bind:key="index">{{category.name}} <span v-if="index<(item.categories.length-1)">, </span></span>
+            </template>
             <!-- Acciones por fila -->
             <template v-slot:[`item.actions`]="{ item }">
                 <v-menu bottom left >
@@ -55,13 +61,13 @@
                     </v-btn>
                     </template>
                     <v-list style="font-size:13px;">
-                        <v-list-item @click="editItem(item)" disabled>
+                        <v-list-item @click="editItem(item)">
                             <v-icon small class="mr-2">
                                 mdi-pencil
                             </v-icon>
                             Editar
                         </v-list-item>
-                        <v-list-item @click="deleteItem(item.id)" disabled>
+                        <v-list-item @click="deleteItem(item.id)">
                             <v-icon small class="mr-2">
                                 mdi-delete
                             </v-icon>
@@ -72,8 +78,8 @@
             </template>
         </v-data-table>
         <!-- Editar -->
-        <v-dialog v-model="editDialog" max-width="700px">
-          <edit v-bind:user="record" @closeEditDialog="closeEditDialog"/>
+        <v-dialog v-model="editDialog" fullscreen transition="dialog-bottom-transition">
+            <edit v-bind:post="record" @closeEditDialog="closeEditDialog"/>
         </v-dialog>
         <!-- Eliminar -->
         <div class="text-center">
@@ -135,14 +141,7 @@ export default {
             return this.$store.state.post.posts_total
         },
         records(){
-            return this.$store.state.post.posts.map(id=>{
-                return{
-                    id:id.id,
-                    title:id.title.rendered,
-                    date:this.dateFormat(id.date),
-                    categories:id.categories
-                }
-            })
+            return this.$store.state.post.posts
         },
         header(){ return [
             { text: 'Titulo', value: 'title'},
@@ -185,11 +184,19 @@ export default {
             
         },
         getDataFromApi () {
+            const { sortBy, sortDesc, page, itemsPerPage } = this.options
             if(this.category_filter!=''){
                 this.category_filter = '&categories='+this.category_filter
             }
-            const { sortBy, sortDesc, page, itemsPerPage } = this.options
-            this.$store.dispatch('post/getPosts', {sortBy:sortBy, sortDesc:sortDesc, page:page, itemsPerPage:itemsPerPage, category:this.category_filter}).then(data => {
+            var sort = ''
+            if (sortBy.length === 1 && sortDesc.length === 1) {
+                if(sortDesc[0]){
+                    sort = "-" + sortBy[0]
+                }else{
+                    sort = sortBy[0]
+                }
+            }
+            this.$store.dispatch('post/getPosts', {'sort':sort, 'page':page, 'itemsPerPage':itemsPerPage, 'category':this.category_filter}).then(data => {
                 this.filterStorageLength = localStorage.getItem('filtersPostsLength')
             })
         },
@@ -227,7 +234,7 @@ export default {
             this.getDataFromApi()
         },
         deleteRecord(){
-            axios.delete(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/users/"+this.deleteId).then(response => {
+            axios.delete(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/posts/"+this.deleteId).then(response => {
                 this.deleteId = ''
                 this.sheet = false
                 this.getDataFromApi()

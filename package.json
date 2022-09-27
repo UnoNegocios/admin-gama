@@ -11,6 +11,8 @@
     "@liripeng/vue-audio-player": "^1.5.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "quill-image-drop-module": "^1.0.3",
+    "quill-image-resize-vue": "^1.0.4",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",

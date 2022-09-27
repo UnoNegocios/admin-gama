@@ -9,6 +9,7 @@ import live from "./modules/live"
 import campaign from "./modules/campaign"
 import ads from "./modules/ads"
 import post from "./modules/post"
+import category from './modules/category'
 
 
 Vue.use(Vuex)
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     podcast_serie,
     live,
     campaign,
-    ads
+    ads,
+    category
   }
 })

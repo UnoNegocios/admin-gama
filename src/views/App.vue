@@ -55,6 +55,7 @@ export default {
   },
   created(){
     this.$store.dispatch('currentUser/getUser')
+    this.$store.dispatch('category/getCategories')
   },
   methods:{
     logout(){

@@ -3,7 +3,7 @@ import axios from "axios";
 const state = {
     posts:[],
     show:false,
-    posts_total:15,
+    posts_total:0,
     loader:true,
 };
 const getters = {};
@@ -11,11 +11,14 @@ const getters = {};
 const actions = {
     getPosts( {commit, state}, props ){
         state.loader = true
-        var items_per_page = '&per_page=' + props.itemsPerPage
+        var items_per_page = props.itemsPerPage
+        var sort_by = props.sort
+        var page = props.page
         var category = props.category
         return new Promise((resolve, reject) => {
-            axios.get('https://wp-backend.gamavision.com/wp-json/wp/v2/posts').then(response => {
-                commit('setPosts', response.data);
+            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/posts?page=' + page + "&sort=" + sort_by + "&itemsPerPage=" + items_per_page + category).then(response => {
+                commit('setPosts', response.data.data);
+                state.posts_total = response.data.meta.total
                 state.loader = false;
             }).finally(() => (resolve(false)))
         })
@@ -24,7 +27,6 @@ const actions = {
 
 const mutations = {
     setPosts(state, data){
-        console.log(data)
         state.posts = data;
     },
     setShow(){

@@ -1,5 +1,6 @@
 <template>
     <v-card class="elevation-0">
+
         <v-toolbar dark color="primary" class="elevation-0">
             <v-btn icon dark @click="close()">
                 <v-icon>mdi-close</v-icon>
@@ -7,6 +8,8 @@
             <v-toolbar-title>Modificar Noticia</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
+                <v-checkbox class="my-5 mr-5" v-model="post.visibility.web" label="Página Web"></v-checkbox>
+                <v-checkbox class="my-5 mr-5" v-model="post.visibility.app" label="Aplicación"></v-checkbox>
                 <v-btn dark text @click="save()">
                     Actualizar
                 </v-btn>
@@ -15,7 +18,7 @@
         <v-form class="px-12 py-6">
             <v-row class="ma-0">
                 <v-col cols="8">
-                    <v-text-field label="Título"></v-text-field>
+                    <v-text-field v-model="post.title" label="Título"></v-text-field>
                 </v-col>
                 <v-col cols="4">
                     <v-autocomplete :loading="isLoadingCategories" :search-input.sync="searchCategories" hide-no-data placeholder="Escribe para buscar" attach
@@ -34,15 +37,16 @@
                 </v-col>
             </v-row>
             <vue-editor
-                id="editor"
-                useCustomImageHandler
-                @imageAdded="handleImageAdded"
-                v-model="post.htmlForEditor"
+                use-custom-image-handler
+                @image-added="handleImageAdded"
+                v-model="post.content"
+                :editorOptions="editorSettings"
                 >
             </vue-editor>
             <v-row class="ma-4">
                 <v-spacer/>
                 <vue-dropzone 
+                v-bind:auth="dropzoneOptions.headers"
                 ref="myVueDropzone" 
                 id="dropzone" 
                 :options="dropzoneOptions" 
@@ -61,21 +65,32 @@
 <script>
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
-import { VueEditor } from "vue2-editor";
+import { VueEditor,Quill } from 'vue2-editor';
+
+import ImageResize from 'quill-image-resize-vue';
+import { ImageDrop } from 'quill-image-drop-module';
+
+Quill.register("modules/imageDrop", ImageDrop);
+Quill.register("modules/imageResize", ImageResize);
+
 import axios from 'axios'
 export default {
     components: { 
         VueEditor,
         vueDropzone: vue2Dropzone
     },
+    props:{
+        post:Object
+    },
     data: () => ({
         searchCategories:'',
         isLoadingCategories:false,
-        post:{
-            categories:[],
-            htmlForEditor:''
+        editorSettings: {
+            modules: {
+                imageDrop: true,
+                imageResize: {},
+            }
         },
-        categories:[],
         image:'',
         snackbar: {
             show: false,
@@ -87,7 +102,7 @@ export default {
             addRemoveLinks: true,
             maxFiles: 1,
             //thumbnailWidth: 150,
-            dictDefaultMessage: 'Haz clic aquí para agregar o arrastra la imagen destacada',
+            dictDefaultMessage: 'Haz clic aquí para editar o arrastra la nueva imagen destacada',
             dictFallbackMessage: "Tu navegador no puede subir archivos arrastarndolos a la pantalla.",
             dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
             dictInvalidFileType: "No puede cargar archivos de este tipo.",
@@ -95,22 +110,37 @@ export default {
             dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
             dictRemoveFile: "Eliminar",
             dictMaxFilesExceeded: "No puedes subir más archivos.",
+            headers: {
+                Authorization: 'Basic ' + window.btoa( 'admin:01672802' )
+            }
         },
     }),
+    watch:{
+        post:{
+            handler(){
+                this.post.categories = this.post.categories.map(category=>category.id)
+            }, deep:true
+        }
+    },
+    created(){
+        this.post.categories = this.post.categories.map(category=>category.id)
+    },
     computed:{
-
+        categories(){
+            return this.$store.state.category.categories
+        }
     },
     methods:{
         handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
             var formData = new FormData();
             formData.append("image", file);
             axios({
-                url: "https://fakeapi.yoursite.com/images",
+                url: process.env.VUE_APP_BACKEND_ROUTE + "api/v1/post/image",
                 method: "POST",
-                data: formData
+                data: formData,
             })
-            .then(result => {
-                const url = result.data.url;
+            .then(response => {
+                const url = process.env.VUE_APP_BACKEND_ROUTE + 'files/' + response.data.file
                 Editor.insertEmbed(cursorLocation, "image", url);
                 resetUploader();
             })
@@ -124,7 +154,7 @@ export default {
         },
         uploadSuccess(file, response) {
             this.image = file
-            this.serie.image_url = response.file
+            this.post.featured_media_path = process.env.VUE_APP_BACKEND_ROUTE + 'files/' + response.file
             this.colorFile = 'success'
         },
         uploadError(file, message) {
@@ -139,15 +169,8 @@ export default {
             this.image = ''
         },
         save(){
-            console.log('repsonse')
-            axios.post('https://wp-backend.gamavision.com/wp-json/wp/v2/posts',{
-                //...data
-            }, {
-                headers:{
-                    'Authorization': {"username": "front-end", "password": "XAg(((A^08AdhD#Y#t&Sng2Q"}
-                }
-            }).then(response=>{
-                console.log(repsonse)
+            axios.patch(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/posts/' + this.post.id, this.post).then(response=>{
+                this.close()
             })
         },
         close(){
@@ -155,21 +178,9 @@ export default {
                 this.$refs.myVueDropzone.removeFile(this.image)
             }
             this.$nextTick(() => {
-                this.$emit("closeCreateDialog", false);
+                this.$emit("closeEditDialog", false);
             })
         }
-    },
-    watch: {
-        searchCategories(val){
-            //if (this.statesList.length > 0) return
-            if (this.isLoadingCategories) return
-            this.isLoadingCategories = true
-
-            axios.get('https://wp-backend.gamavision.com/wp-json/wp/v2/categories?search='+val)
-            .then(res => {
-                this.categories = this.categories.concat(res.data)
-            }).finally(() => (this.isLoadingCategories = false))
-        },
     },
 }
 </script>
