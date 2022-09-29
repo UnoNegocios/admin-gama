@@ -97,7 +97,8 @@ export default {
             },
             featured_media_path:'',
             status:'published',
-            short_description:''
+            short_description:'',
+            author_id:''
         },
         editorSettings: {
             modules: {
@@ -127,6 +128,11 @@ export default {
         },
     }),
     computed:{
+        currentUser:{
+            get(){
+              return this.$store.state.currentUser.user
+            }
+          },
         categories(){
             return this.$store.state.category.categories
         },
@@ -182,6 +188,7 @@ export default {
             this.image = ''
         },
         save(){
+            this.post.author_id = this.currentUser.id
             axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/posts', this.post).then(response=>{
                 this.close()
             })
