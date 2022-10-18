@@ -152,7 +152,8 @@ export default {
         dropzoneOptions: {
             url: process.env.VUE_APP_BACKEND_ROUTE + "api/v1/ads/files",
             addRemoveLinks: true,
-            maxFiles: 1
+            maxFiles: 1,
+            headers:{"Authorization":'Bearer ' + localStorage.getItem("token")},
         },
         gris:false,
         image:'',

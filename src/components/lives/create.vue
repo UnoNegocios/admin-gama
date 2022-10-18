@@ -72,7 +72,8 @@ export default {
         dropzoneOptions: {
             url: process.env.VUE_APP_BACKEND_ROUTE + "api/v1/live/files",
             addRemoveLinks: true,
-            maxFiles: 1
+            maxFiles: 1,
+            headers:{"Authorization":'Bearer ' + localStorage.getItem("token")},
         },
     }),
     computed:{

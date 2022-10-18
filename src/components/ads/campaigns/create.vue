@@ -18,7 +18,7 @@
                             name="title"
                             label="Titulo"
                             outlined
-                            v-model="campaign.title" 
+                            v-model="campaign.name" 
                             dense
                         ></v-text-field>
                     </v-col>
@@ -124,7 +124,7 @@ export default {
             this.$refs.menu2.save(date)
         },
         save(){
-            axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/campaigns", this.campaign).then(response=>{
+            axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/ad_campaigns", this.campaign).then(response=>{
                 this.close()
             }).catch(error=>{
                 this.snackbar = {

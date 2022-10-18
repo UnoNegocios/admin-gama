@@ -119,6 +119,7 @@
                     dictCancelUploadConfirmation: "Estás seguro de que deseas cancelar esta carga?",
                     dictRemoveFile: "Eliminar",
                     dictMaxFilesExceeded: "No puedes subir más archivos.",
+                    headers:{"Authorization":'Bearer ' + localStorage.getItem("token")},
                 },
                 info:true,
                 editName:false,
