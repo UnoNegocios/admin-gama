@@ -188,7 +188,6 @@ export default {
             this.$refs.menu2.save(date)
         },
         save(){
-            this.ad.ad_campaign_id = this.$route.params.serie_id
             axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/ads/" + this.ad.id, this.ad).then(response=>{
                 this.close()
             }).catch(error=>{

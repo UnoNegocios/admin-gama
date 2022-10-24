@@ -7,9 +7,9 @@ const getters = {};
 
 const actions = {
     getAds({commit}, values){
-        axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/adCampaigns/"+values.campaign_id+"/displayAds").then(response => {//?page=" + values.page + values.filters).then(response => {
-            commit('setAds', response.data);
-            commit('setAdsTotal', response.data.length);
+        axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/ads").then(response => {//?page=" + values.page + values.filters).then(response => {
+            commit('setAds', response.data.data);
+            commit('setAdsTotal', response.meta.total);
         });
     }
 };

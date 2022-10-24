@@ -2,7 +2,7 @@
     <v-container class="py-4">
         <!-- Header -->
         <v-toolbar dark flat class="mb-0 mt-0 px-6">
-            <v-toolbar-title>Anuncios - <strong>{{currentCampaign}}</strong></v-toolbar-title>
+            <v-toolbar-title>Anuncios</v-toolbar-title>
             <v-spacer></v-spacer>
             <!-- Filtros -->
             <!--v-btn light class="ml-6" @click="openSearch=!openSearch">
@@ -30,12 +30,6 @@
         :headers="header"
         :options.sync="options"
         :loading="loading">
-        <template v-slot:[`item.created_at`]="{ item }">
-            {{item.created_at.slice(0,10)}}
-        </template>
-        <template v-slot:[`item.updated_at`]="{ item }">
-            {{item.updated_at.slice(0,10)}}
-        </template>
         <template v-slot:[`item.medida`]="{ item }">
             {{item.height}} x {{item.width}}
         </template>
@@ -135,12 +129,10 @@ export default {
             return this.$store.state.ads.ads
         },
         header(){ return [
+            { text: 'Cliente', value: 'client.name'},
             { text: 'Titulo', value: 'title'},
             { text: 'Banner', value: 'image_url'},
-            { text: 'Medida', value: 'medida'},
             { text: 'Link', value: 'url'},
-            
-            //{ text: 'Vistas', value: 'views'},
 
             { text: 'Impresiones', value: 'impressions'},
             { text: 'Clics', value: 'clicks'},
@@ -148,9 +140,8 @@ export default {
             { text: 'Comienza', value: 'start_time'},
             { text: 'Finaliza', value: 'end_time'},
             
-
-            { text: 'Creación', value: 'created_at'},
-            { text: 'Edición', value: 'updated_at'},
+            { text: 'Horario Inicio', value: 'start_hour'},
+            { text: 'Horario Fin', value: 'end_hour'},
             { value: 'actions', sortable: false, align: 'end', }
         ]},
         currentUser:{
@@ -176,7 +167,8 @@ export default {
     methods:{
         getDataFromApi () {
             this.loading = true
-            this.$store.dispatch('ads/getAds', {filters:'&filter[title]=' + this.search, campaign_id: this.$route.params.campaign_id, sortBy:this.options.sortBy, sortDesc:this.options.sortDesc, page:this.options.page, itemsPerPage:this.options.itemsPerPage}).then(data => {
+
+            this.$store.dispatch('ads/getAds', {filters:'&filter[title]=' + this.search, sortBy:this.options.sortBy, sortDesc:this.options.sortDesc, page:this.options.page, itemsPerPage:this.options.itemsPerPage}).then(data => {
                 this.filterStorageLength = localStorage.getItem('filtersfiltersPodcastsLength')
                 this.loading = false
             })
