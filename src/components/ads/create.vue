@@ -323,7 +323,7 @@ export default {
         uploadSuccess(file, response) {
             this.image = file
             this.ad.image_path = response.file
-            this.ad.image_url = process.env.VUE_APP_BACKEND_ROUTE + response.file
+            this.ad.image_url = process.env.VUE_APP_BACKEND_ROUTE + 'files/' + response.file
             this.colorFile = 'success'
         },
         uploadError(file, message) {
@@ -340,16 +340,3 @@ export default {
     }
 }
 </script>
-
-
-Titulo
-Cliente
-Link
-Imagen
-Fecha inicio
-Fecha finalización
-Horario
-Activo/inactivo
-Posicion
-Impresiones
-Clics

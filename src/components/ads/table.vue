@@ -216,7 +216,22 @@ export default {
             this.sheet = true
         },
         editItem(editedItem){
-            this.record = editedItem
+            console.log(editedItem)
+            this.record = [editedItem].map(id=>{return{
+                id:id.id,
+                is_active: id.is_active,
+                client_id:id.client.id,
+                client:id.client,
+                title: id.title,
+                url: id.url,
+                start_time: id.start_time,
+                end_time: id.end_time,
+                start_hour:id.start_hour,
+                end_hour:id.end_hour,
+                position: id.position,
+                image_url: id.image_url,
+            }})[0]
+            console.log(this.record)
             this.editDialog = true
         },
     },

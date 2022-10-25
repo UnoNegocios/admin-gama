@@ -13,10 +13,12 @@
   </v-app>
 </template>
 <script>
+import update from './mixins/update'
 import App from "../src/views/App"
 import Login from "../src/views/Login"
 import axios from "axios"
 export default {
+  mixins: [update],
   name: 'App',
   data: () => ({
     token:localStorage.getItem("token"),
