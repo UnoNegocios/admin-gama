@@ -177,6 +177,7 @@ export default {
     }, 
     data: () => ({
         positions:[
+            {label:'Fullscreen App', size:'1170×2077'},
             {label:'Inicio', size:'1280x240'},
             {label:'Categoría', size:'1280x240'},
             {label:'Noticia', size:'720x720'},
