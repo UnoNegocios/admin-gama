@@ -32,6 +32,9 @@ export default {
       localStorage.removeItem("token");
       this.token = null
     });
+  },
+  created(){
+    console.log('0.1.4')
   }
 };
 </script>

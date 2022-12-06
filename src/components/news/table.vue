@@ -255,9 +255,28 @@ export default {
             this.sheet = true
         },
         editItem(editedItem){
-            this.record = editedItem
+            console.log(editedItem)
+            this.record = [editedItem].map(id=>{
+                return{
+                    categories:id.categories.map(category=>category.id),
+                    content:id.content,
+                    title:id.title,
+                    visibility:id.visibility,
+                    featured_media_path:id.featured_media_path,
+                    status:id.status,
+                    short_description:id.short_description,
+                    author_id:this.existId(id.author)
+                }
+            })[0]
             this.editDialog = true
         },
+        existId(author){
+            if(author!=undefined){
+                return author.id
+            }else{
+                return ''
+            }
+        }
     },
 }
 </script>
