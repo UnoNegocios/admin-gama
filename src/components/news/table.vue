@@ -52,6 +52,9 @@
             <template v-slot:[`item.categories`]="{ item }">
                 <span v-for="(category, index) in item.categories" v-bind:key="index">{{category.name}} <span v-if="index<(item.categories.length-1)">, </span></span>
             </template>
+            <template v-slot:[`item.sent_push_notification`]="{ item }">
+                <v-icon v-if="item.sent_push_notification">mdi-check</v-icon>
+            </template>
             <!-- Acciones por fila -->
             <template v-slot:[`item.actions`]="{ item }">
                 <v-menu bottom left >
@@ -72,6 +75,12 @@
                                 mdi-delete
                             </v-icon>
                             Eliminar
+                        </v-list-item>
+                        <v-list-item @click="sendPushNotification(item.id)">
+                            <v-icon small class="mr-2">
+                                mdi-bell
+                            </v-icon>
+                            Enviar Notifiación
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -147,6 +156,7 @@ export default {
             { text: 'Titulo', value: 'title'},
             { text: 'Categorías', value: 'categories'},
             { text: 'Fecha', value: 'date'},
+            { text: 'Notifiación', value: 'sent_push_notification'},
             { value: 'actions', sortable: false, align: 'end', }
         ]},
         currentUser:{
@@ -164,6 +174,11 @@ export default {
         },
     },
     methods:{
+        sendPushNotification(id){
+            axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/post/' + id + '/send_push').then(response=>{
+                this.getDataFromApi()
+            })
+        },
         dateFormat(date){
             // Creamos el objeto fecha instanciándolo con la clase Date
             const fecha = new Date(date.slice(0,10));

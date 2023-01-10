@@ -8,6 +8,7 @@
             <v-toolbar-title>Nueva Noticia</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
+                <v-switch class="my-5 mr-10" v-model="post.send_push" inset label="Enviar Notificación" ></v-switch>
                 <v-checkbox class="my-5 mr-5" v-model="post.visibility.web" label="Página Web"></v-checkbox>
                 <v-checkbox class="my-5 mr-5" v-model="post.visibility.app" label="Aplicación"></v-checkbox>
                 <v-btn dark text @click="save()" :disabled="grey">
@@ -88,6 +89,7 @@ export default {
         searchCategories:'',
         isLoadingCategories:false,
         post:{
+            send_push:false,
             categories:[],
             content:'',
             title:'',
